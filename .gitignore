@@ -1,0 +1,59 @@
+# Python-generated files
+__pycache__/
+*.py[oc]
+build/
+dist/
+wheels/
+*.egg-info
+
+# Virtual environments
+.venv/
+venv/
+env/
+
+# Sensitive configuration files
+config.json
+*.env
+.env.*
+secrets.json
+
+# Application data directories
+screenshots/
+web_data/
+logs/
+temp/
+tmp/
+
+# IDE and editor files
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+
+# OS generated files
+.DS_Store
+.DS_Store?
+._*
+.Spotlight-V100
+.Trashes
+ehthumbs.db
+Thumbs.db
+
+# Build artifacts
+dist/
+build/
+*.spec
+
+# Development tools
+.trae/
+.pytest_cache/
+.coverage
+htmlcov/
+
+# Backup files
+*.bak
+*.backup
+*.old
+
+ScreenCapture.spec

@@ -1,0 +1,503 @@
+/* 全局样式 */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    min-height: 100vh;
+    color: #333;
+    line-height: 1.5;
+    font-size: 14px;
+}
+
+.container {
+    max-width: 2500px;
+    width: 100%;
+    margin: 0 auto;
+    padding: 4px;
+}
+
+/* 头部样式 */
+.header {
+    background: rgba(255, 255, 255, 0.95);
+    backdrop-filter: blur(10px);
+    border-radius: 6px;
+    padding: 4px 8px;
+    margin-bottom: 2px;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    flex-wrap: wrap;
+}
+
+.header h1 {
+    color: #4a5568;
+    font-size: 1.1rem;
+    font-weight: 600;
+    margin: 0;
+}
+
+.status-indicator {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-weight: 500;
+}
+
+.status-dot {
+    width: 12px;
+    height: 12px;
+    border-radius: 50%;
+    background: #ef4444;
+    animation: pulse 2s infinite;
+}
+
+.status-dot.connected {
+    background: #10b981;
+}
+
+@keyframes pulse {
+    0%, 100% { opacity: 1; }
+    50% { opacity: 0.5; }
+}
+
+/* 控制按钮样式 */
+.controls {
+    background: rgba(255, 255, 255, 0.9);
+    backdrop-filter: blur(10px);
+    border-radius: 4px;
+    padding: 3px 6px;
+    margin-bottom: 2px;
+    display: flex;
+    gap: 6px;
+    align-items: center;
+    flex-wrap: wrap;
+    box-shadow: 0 1px 4px rgba(0, 0, 0, 0.1);
+}
+
+.btn {
+    padding: 4px 8px;
+    border: none;
+    border-radius: 4px;
+    font-weight: 500;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    font-size: 12px;
+}
+
+.btn-primary {
+    background: #3b82f6;
+    color: white;
+}
+
+.btn-primary:hover {
+    background: #2563eb;
+    transform: translateY(-2px);
+}
+
+.btn-danger {
+    background: #ef4444;
+    color: white;
+}
+
+.btn-danger:hover {
+    background: #dc2626;
+    transform: translateY(-2px);
+}
+
+.auto-refresh {
+    margin-left: auto;
+}
+
+.auto-refresh label {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    cursor: pointer;
+    font-weight: 500;
+}
+
+/* 最新结果样式 */
+.latest-result {
+    margin-bottom: 1px;
+}
+
+.latest-result h2 {
+    color: #4a5568;
+    margin-bottom: 1px;
+    font-size: 1rem;
+    font-weight: 600;
+}
+
+/* 历史记录样式 */
+.history-section h2 {
+    color: #4a5568;
+    margin-bottom: 1px;
+    font-size: 1rem;
+    font-weight: 600;
+}
+
+.results-container {
+    display: grid;
+    gap: 1px;
+}
+
+/* 结果卡片样式 */
+.result-card {
+    background: rgba(255, 255, 255, 0.95);
+    backdrop-filter: blur(10px);
+    border-radius: 12px;
+    padding: 8px;
+    box-shadow: 0 4px 16px rgba(0, 0, 0, 0.1);
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+    margin-bottom: 8px;
+    border: 1px solid #e5e7eb;
+}
+
+.result-card:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.15);
+}
+
+.result-card.latest {
+    border: 2px solid #10b981;
+    box-shadow: 0 8px 32px rgba(16, 185, 129, 0.2);
+}
+
+.result-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 2px;
+    flex-wrap: wrap;
+    gap: 8px;
+}
+
+.result-type {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    padding: 8px 16px;
+    border-radius: 20px;
+    font-size: 14px;
+    font-weight: 600;
+    text-transform: uppercase;
+}
+
+.result-type.screenshot {
+    background: #dbeafe;
+    color: #1e40af;
+}
+
+.result-type.clipboard {
+    background: #fef3c7;
+    color: #92400e;
+}
+
+.result-timestamp {
+    color: #6b7280;
+    font-size: 14px;
+}
+
+/* 原始内容区域 - 默认折叠 */
+.original-content-section {
+    margin-top: 4px;
+    border: 1px solid #e5e7eb;
+    border-radius: 6px;
+    overflow: hidden;
+}
+
+.original-content-header {
+    background: #f9fafb;
+    padding: 4px 8px;
+    cursor: pointer;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    transition: background-color 0.3s ease;
+    font-size: 12px;
+    font-weight: 500;
+    color: #6b7280;
+    height: 28px;
+    line-height: 1.2;
+}
+
+.original-content-header:hover {
+    background: #f3f4f6;
+}
+
+.original-content-toggle {
+    background: none;
+    border: none;
+    color: #6b7280;
+    font-size: 16px;
+    cursor: pointer;
+    transition: transform 0.3s ease;
+    padding: 0;
+    width: 20px;
+    height: 20px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.original-content-body {
+    background: #ffffff;
+    padding: 12px;
+    border-top: 1px solid #e5e7eb;
+}
+
+.original-text-content {
+    font-family: 'Courier New', monospace;
+    white-space: pre-wrap;
+    word-break: break-word;
+    font-size: 14px;
+    line-height: 1.5;
+    color: #374151;
+    background: #f8fafc;
+    padding: 12px;
+    border-radius: 6px;
+    border-left: 4px solid #3b82f6;
+}
+
+.result-image {
+    max-width: 100%;
+    height: auto;
+    border-radius: 8px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+    margin-bottom: 8px;
+}
+
+
+
+/* AI分析结果主要区域 - 突出显示 */
+.ai-analysis-main {
+    background: linear-gradient(135deg, #f0fdf4 0%, #dcfce7 100%);
+    border: 3px solid #10b981;
+    border-radius: 12px;
+    padding: 12px;
+    margin-bottom: 8px;
+    box-shadow: 0 8px 24px rgba(16, 185, 129, 0.2);
+    position: relative;
+}
+
+.ai-analysis-main::before {
+    content: '';
+    position: absolute;
+    top: -2px;
+    left: -2px;
+    right: -2px;
+    bottom: -2px;
+    background: linear-gradient(45deg, #10b981, #059669, #047857);
+    border-radius: 14px;
+    z-index: -1;
+    animation: glow 2s ease-in-out infinite alternate;
+}
+
+@keyframes glow {
+    from { opacity: 0.5; }
+    to { opacity: 0.8; }
+}
+
+
+
+.analysis-answer {
+    background: #ffffff;
+    border-radius: 8px;
+    padding: 16px;
+    white-space: pre-wrap;
+    word-break: break-word;
+    font-size: 16px;
+    line-height: 1.6;
+    font-weight: 500;
+    color: #1f2937;
+    box-shadow: inset 0 2px 8px rgba(16, 185, 129, 0.1);
+    margin: 0;
+}
+
+/* 折叠功能样式 */
+.collapsible-section {
+    margin-bottom: 4px;
+}
+
+.collapsible-header {
+    background: rgba(237, 242, 247, 0.9);
+    border: 1px solid #cbd5e0;
+    border-radius: 6px;
+    padding: 4px 8px;
+    cursor: pointer;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    transition: all 0.3s ease;
+    font-size: 12px;
+    height: 28px;
+    line-height: 1.2;
+}
+
+.collapsible-header:hover {
+    background: #dcfce7;
+}
+
+.collapsible-content {
+    padding: 12px;
+    border-radius: 0 0 6px 6px;
+    background: #f0fdf4;
+    display: none;
+    font-size: 14px;
+}
+
+.collapsible-content.expanded {
+    display: block;
+}
+
+.collapse-toggle {
+    background: none;
+    border: none;
+    color: #059669;
+    font-size: 18px;
+    cursor: pointer;
+    transition: transform 0.3s ease;
+    padding: 0;
+    width: 24px;
+    height: 24px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.collapse-toggle.expanded {
+    transform: rotate(90deg);
+}
+
+.result-text {
+    background: #f8fafc;
+    border-left: 4px solid #3b82f6;
+    border-radius: 8px;
+    font-family: 'Courier New', monospace;
+    white-space: pre-wrap;
+    word-break: break-word;
+    margin-bottom: 1px;
+}
+
+/* 移除旧的文本折叠样式，已被新的原始内容样式替代 */
+
+.no-data {
+    text-align: center;
+    color: #6b7280;
+    font-style: italic;
+    padding: 40px;
+    background: rgba(255, 255, 255, 0.7);
+    border-radius: 12px;
+    backdrop-filter: blur(5px);
+}
+
+.delete-btn {
+    background: #ef4444;
+    color: white;
+    border: none;
+    padding: 8px 16px;
+    border-radius: 6px;
+    cursor: pointer;
+    font-size: 14px;
+    transition: background 0.3s ease;
+}
+
+.delete-btn:hover {
+    background: #dc2626;
+}
+
+/* 思考过程区域样式 */
+.think-process-section {
+    margin: 4px 0;
+}
+
+/* <think>标签折叠样式 - 更新设计 */
+.think-collapsible-section {
+    margin: 1px 0;
+    border: 1px solid #f59e0b;
+    border-radius: 8px;
+    overflow: hidden;
+}
+
+.think-collapsible-header {
+    background: linear-gradient(135deg, #fef3c7 0%, #fde68a 100%);
+    padding: 4px 8px;
+    cursor: pointer;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    transition: all 0.3s ease;
+    font-size: 12px;
+    font-weight: 500;
+    color: #92400e;
+    height: 28px;
+    line-height: 1.2;
+}
+
+.think-collapsible-header:hover {
+    background: linear-gradient(135deg, #fde68a 0%, #fcd34d 100%);
+}
+
+.think-collapsible-content {
+    padding: 16px;
+    background: #fffbeb;
+    border-top: 1px solid #f59e0b;
+    white-space: pre-wrap;
+    word-break: break-word;
+    font-size: 14px;
+    line-height: 1.5;
+    color: #92400e;
+    font-family: 'Courier New', monospace;
+}
+
+.think-toggle-btn {
+    font-weight: bold;
+    color: #d97706;
+    font-size: 16px;
+    transition: transform 0.3s ease;
+}
+
+/* 响应式设计 */
+@media (max-width: 768px) {
+    .container {
+        padding: 10px;
+    }
+    
+    .header {
+        flex-direction: column;
+        gap: 15px;
+        text-align: center;
+    }
+    
+    .controls {
+        justify-content: center;
+    }
+    
+    .result-header {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 10px;
+    }
+}
+
+/* 加载动画 */
+.loading {
+    display: inline-block;
+    width: 20px;
+    height: 20px;
+    border: 3px solid #f3f3f3;
+    border-top: 3px solid #3b82f6;
+    border-radius: 50%;
+    animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
+}

@@ -1,0 +1,6 @@
+@echo off
+echo 正在打包屏幕截图工具...
+python build.py
+echo.
+echo 打包完成！按任意键退出...
+pause > nul

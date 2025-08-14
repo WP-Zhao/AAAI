@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>考试助手 - 实时分析结果</title>
+    <link rel="stylesheet" href="/static/style.css">
+</head>
+<body>
+    <div class="container">
+        <!-- 头部 -->
+        <header class="header">
+            <h1>🎓 考试助手</h1>
+            <div class="status-indicator">
+                <div class="status-dot" id="statusDot"></div>
+                <span id="statusText">连接中...</span>
+            </div>
+        </header>
+
+        <!-- 控制面板 -->
+        <div class="controls">
+            <button class="btn btn-primary" id="refreshBtn">🔄 刷新</button>
+            <button class="btn btn-danger" id="clearBtn">🗑️ 清空历史</button>
+            <div class="auto-refresh">
+                <label>
+                    <input type="checkbox" id="autoRefresh" checked>
+                    自动刷新 (5秒)
+                </label>
+            </div>
+        </div>
+
+        <!-- 最新结果 -->
+        <section class="latest-result">
+            <h2>🎯 最新AI分析结果</h2>
+            <div id="latestCard">
+                <div class="no-data">暂无数据，等待分析结果...</div>
+            </div>
+        </section>
+
+        <!-- 历史记录 -->
+        <section class="history-section">
+            <h2>📚 历史记录</h2>
+            <div class="results-container" id="resultsContainer">
+                <div class="no-data">暂无数据</div>
+            </div>
+        </section>
+    </div>
+
+    <script src="/static/script.js"></script>
+</body>
+</html>

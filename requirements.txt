@@ -1,0 +1,14 @@
+# 现有依赖
+pynput==1.7.6
+Pillow==10.0.1
+pyperclip==1.8.2
+requests==2.31.0
+
+# Web服务依赖
+fastapi==0.104.1
+uvicorn[standard]==0.24.0
+jinja2==3.1.2
+python-multipart==0.0.6
+
+# 其他可能需要的依赖
+aiofiles==23.2.1

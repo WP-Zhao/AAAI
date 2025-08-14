@@ -1,0 +1,18 @@
+[project]
+name = "cut-screen"
+version = "0.1.0"
+description = "Windows屏幕截图工具，支持键盘监听、自动截图和邮件发送"
+readme = "README.md"
+requires-python = ">=3.13"
+dependencies = [
+    "pynput>=1.7.6",
+    "pillow>=10.0.0",
+    "pyperclip>=1.8.2",
+    "pyinstaller>=6.0.0",
+    "requests>=2.31.0",
+    "openai>=1.0.0",
+    "anthropic>=0.7.0",
+    "fastapi>=0.116.1",
+    "uvicorn>=0.35.0",
+    "jinja2>=3.1.0",
+]

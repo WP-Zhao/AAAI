@@ -1,0 +1,58 @@
+{
+    "email": {
+        "enabled": true,
+        "smtp_server": "smtp.xxx.com",
+        "smtp_port": 465,
+        "sender_email": "xxx",
+        "sender_password": "xxx",
+        "receiver_email": "xxx"
+    },
+    "web_service": {
+        "enabled": true,
+        "host": "0.0.0.0",
+        "port": 8000,
+        "max_results": 100
+    },
+    "screenshot": {
+        "save_path": "screenshots",
+        "image_format": "PNG"
+    },
+    "hotkeys": {
+        "screenshot_trigger": "enter",
+        "clipboard_trigger": "shift",
+        "trigger_count": 3,
+        "trigger_timeout": 2.0
+    },
+    "llm": {
+        "enabled": true,
+        "text_model": {
+            "provider": "ollama",
+            "model": "gemma3:4b",
+            "prompt": "请分析以下内容并提供详细解答：{content}"
+        },
+        "vision_model": {
+            "provider": "ollama",
+            "model": "gemma3:4b",
+            "prompt": "请分析这张图片中的内容，特别是如果这是一道题目，请提供详细的解答。"
+        },
+        "ollama": {
+            "base_url": "http://localhost:11434",
+            "timeout": 1800
+        },
+        "openai": {
+            "api_key": "",
+            "base_url": "https://api.openai.com/v1"
+        },
+        "claude": {
+            "api_key": ""
+        },
+        "doubao": {
+            "api_key": "",
+            "api_url": "https://ark.cn-beijing.volces.com/api/v3/chat/completions"
+        },
+        "qianwen": {
+            "api_key": "sk-xxx",
+            "api_url": "https://api.suanli.cn/v1"
+        }
+    }
+}
