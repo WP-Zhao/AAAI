@@ -1,9 +1,4 @@
-# Another AI Assistant Interview (AAAI)
-
-一个基于AI的智能考试辅助工具，支持屏幕截图分析、剪贴板内容处理和多种大语言模型服务。[project]
-name = "another-ai-assistant-interview"
-version = "0.1.0"
-description = "Another AI Assistant Interview - 智能面试/考试辅助工具"# Another AI Assistant Interview (AAAI)
+# Another AI Assistant for Interview (AAAI)
 
 一个基于AI的智能面试/考试辅助工具，支持屏幕截图分析、剪贴板内容处理和多种大语言模型服务。
 
@@ -35,7 +30,7 @@ description = "Another AI Assistant Interview - 智能面试/考试辅助工具"
 
 使用uv（推荐）:
 ```bash
-# 安装uv（如果尚未安装）
+# 安装uv（如果尚未安装，或者github搜索uv）
 pip install uv
 
 # 安装项目依赖
@@ -278,39 +273,6 @@ python main.py
 - 该文件已被 `.gitignore` 忽略，不会被提交到版本控制
 - 请勿在公开场所分享此文件
 - 建议定期更换API密钥和密码
-
-### 开源前安全检查
-
-如果你要fork或分享此项目，请运行安全检查脚本：
-
-```bash
-python setup_for_opensource.py
-```
-
-此脚本将：
-- 检查是否存在敏感配置文件
-- 扫描代码中的潜在敏感信息
-- 提供安全配置建议
-- 生成详细的安全检查报告
-
-### 最佳安全实践
-
-1. **API密钥管理**:
-   - 使用环境变量存储敏感信息
-   - 定期轮换API密钥
-   - 为不同项目使用不同的密钥
-
-2. **邮箱安全**:
-   - 使用应用专用密码而非主密码
-   - 考虑为此项目创建专用邮箱账户
-   - 启用两步验证
-
-3. **网络安全**:
-   - 在生产环境中修改默认端口
-   - 使用HTTPS（如果部署到公网）
-   - 配置适当的防火墙规则
-
-详细的安全检查报告请查看: [SECURITY_CHECKLIST.md](SECURITY_CHECKLIST.md)
 
 ## 📞 支持
 
