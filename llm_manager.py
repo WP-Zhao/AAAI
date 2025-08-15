@@ -1,8 +1,10 @@
 import json
 import requests
 import base64
+import os
 from typing import Dict, Optional, Any, List
 from datetime import datetime
+from volcenginesdkarkruntime import Ark
 
 class LLMManager:
     """LLM管理器，支持多种大语言模型服务"""
@@ -147,8 +149,74 @@ class LLMManager:
             print(f"Claude调用失败: {str(e)}")
             return None
     
+    def _call_doubao(self, model: str, prompt: str, image_path: Optional[str] = None) -> Optional[str]:
+        """调用豆包API"""
+        try:
+            doubao_config = self.llm_config.get('doubao', {})
+            api_key = doubao_config.get('api_key') or os.environ.get('ARK_API_KEY')
+            base_url = doubao_config.get('base_url', 'https://ark.cn-beijing.volces.com/api/v3')
+            
+            if not api_key:
+                print("豆包API密钥未配置")
+                return None
+            
+            client = Ark(
+                base_url=base_url,
+                api_key=api_key
+            )
+            
+            messages = []
+            
+            if image_path:
+                # 多模态消息
+                if image_path.startswith(('http://', 'https://')):
+                    # 如果是URL，直接使用
+                    image_url = image_path
+                else:
+                    # 如果是本地文件路径，转换为base64
+                    image_base64 = self._encode_image_to_base64(image_path)
+                    if image_base64:
+                        image_url = f'data:image/jpeg;base64,{image_base64}'
+                    else:
+                        messages.append({'role': 'user', 'content': prompt})
+                        image_url = None
+                
+                if image_url:
+                    messages.append({
+                        'role': 'user',
+                        'content': [
+                            {'type': 'text', 'text': prompt},
+                            {
+                                'type': 'image_url',
+                                'image_url': {
+                                    'url': image_url
+                                }
+                            }
+                        ]
+                    })
+                else:
+                    messages.append({'role': 'user', 'content': prompt})
+            else:
+                # 纯文本消息
+                messages.append({'role': 'user', 'content': prompt})
+            
+            # 支持应用层加密
+            extra_headers = doubao_config.get('extra_headers', {'x-is-encrypted': 'true'})
+            
+            response = client.chat.completions.create(
+                model=model,
+                messages=messages,
+                extra_headers=extra_headers
+            )
+            
+            return response.choices[0].message.content
+            
+        except Exception as e:
+            print(f"豆包调用失败: {str(e)}")
+            return None
+    
     def _call_custom_api(self, provider: str, model: str, prompt: str, image_path: Optional[str] = None) -> Optional[str]:
-        """调用自定义API（豆包、千问等）"""
+        """调用自定义API（千问等）"""
         try:
             provider_config = self.llm_config.get(provider, {})
             url = provider_config.get('api_url')
@@ -225,6 +293,8 @@ class LLMManager:
                 return self._call_openai(model, prompt)
             elif provider == 'claude':
                 return self._call_claude(model, prompt)
+            elif provider == 'doubao':
+                return self._call_doubao(model, prompt)
             else:
                 # 自定义API提供商
                 return self._call_custom_api(provider, model, prompt)
@@ -254,6 +324,8 @@ class LLMManager:
                 return self._call_openai(model, prompt_template, image_path)
             elif provider == 'claude':
                 return self._call_claude(model, prompt_template, image_path)
+            elif provider == 'doubao':
+                return self._call_doubao(model, prompt_template, image_path)
             else:
                 # 自定义API提供商
                 return self._call_custom_api(provider, model, prompt_template, image_path)
@@ -303,6 +375,8 @@ class LLMManager:
                 return self._check_openai_availability()
             elif provider == 'claude':
                 return self._check_claude_availability()
+            elif provider == 'doubao':
+                return self._check_doubao_availability()
             else:
                 # 自定义API提供商
                 return self._check_custom_api_availability(provider)
@@ -346,6 +420,21 @@ class LLMManager:
             return True
         except Exception as e:
             print(f"Claude配置检查失败: {str(e)}")
+            return False
+    
+    def _check_doubao_availability(self) -> bool:
+        """检查豆包API可用性"""
+        try:
+            doubao_config = self.llm_config.get('doubao', {})
+            api_key = doubao_config.get('api_key') or os.environ.get('ARK_API_KEY')
+            
+            if not api_key:
+                print("豆包API密钥未配置")
+                return False
+            
+            return True
+        except Exception as e:
+            print(f"豆包配置检查失败: {str(e)}")
             return False
     
     def _check_custom_api_availability(self, provider: str) -> bool:

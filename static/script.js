@@ -11,6 +11,8 @@ const autoRefreshCheckbox = document.getElementById('autoRefresh');
 const latestCard = document.getElementById('latestCard');
 const resultsContainer = document.getElementById('resultsContainer');
 
+// Markdown渲染器已移除，使用纯文本显示
+
 // 初始化
 document.addEventListener('DOMContentLoaded', function() {
     initializeApp();
@@ -404,13 +406,22 @@ function processThinkTagsOnly(text) {
     return thinkContent;
 }
 
-// 移除思考过程标签，只保留答案内容
+// 移除思考过程标签，只保留答案内容，显示为纯文本
 function removeThinkTags(text) {
     if (!text) return '';
     
     // 移除<think>标签及其内容
     const thinkRegex = /<think>[\s\S]*?<\/think>/g;
-    return text.replace(thinkRegex, '').trim();
+    let cleanText = text.replace(thinkRegex, '').trim();
+    
+    // 移除Markdown标记符号
+    // 移除#号（标题标记）
+    cleanText = cleanText.replace(/#+\s*/g, '');
+    // 移除*号（粗体/斜体标记）
+    cleanText = cleanText.replace(/\*+/g, '');
+    
+    // 使用HTML转义和换行符转换，不进行Markdown渲染
+    return escapeHtml(cleanText).replace(/\n/g, '<br>');
 }
 
 // 切换<think>标签折叠状态

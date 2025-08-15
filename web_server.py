@@ -15,26 +15,26 @@ import logging
 
 # 配置Web服务器日志
 web_logger = logging.getLogger('WebServer')
-web_logger.setLevel(logging.INFO)
+web_logger.setLevel(logging.WARNING)  # 只显示WARNING及以上级别
 
 def get_resource_path(relative_path: str) -> str:
     """获取资源文件的绝对路径，兼容开发环境和PyInstaller打包环境"""
-    web_logger.info(f"解析资源路径: {relative_path}")
+    web_logger.debug(f"解析资源路径: {relative_path}")
     try:
         # PyInstaller打包后的临时目录
         base_path = sys._MEIPASS
-        web_logger.info(f"检测到PyInstaller环境，基础路径: {base_path}")
+        web_logger.debug(f"检测到PyInstaller环境，基础路径: {base_path}")
     except AttributeError:
         # 开发环境
         base_path = os.path.dirname(os.path.abspath(__file__))
-        web_logger.info(f"开发环境，基础路径: {base_path}")
+        web_logger.debug(f"开发环境，基础路径: {base_path}")
     
     full_path = os.path.join(base_path, relative_path)
-    web_logger.info(f"完整资源路径: {full_path}")
+    web_logger.debug(f"完整资源路径: {full_path}")
     
     # 检查路径是否存在
     if os.path.exists(full_path):
-        web_logger.info(f"资源路径存在: {full_path}")
+        web_logger.debug(f"资源路径存在: {full_path}")
     else:
         web_logger.warning(f"资源路径不存在: {full_path}")
     
@@ -42,22 +42,22 @@ def get_resource_path(relative_path: str) -> str:
 
 web_logger.info("初始化FastAPI应用")
 app = FastAPI(title="ExamAssistant Web Display", version="1.0.0")
-web_logger.info("FastAPI应用创建成功")
+web_logger.debug("FastAPI应用创建成功")
 
 # 数据存储路径
 web_logger.info("设置数据存储路径")
 DATA_DIR = Path("web_data")
 RESULTS_FILE = DATA_DIR / "results.json"
 IMAGES_DIR = DATA_DIR / "images"
-web_logger.info(f"数据目录: {DATA_DIR}, 结果文件: {RESULTS_FILE}, 图片目录: {IMAGES_DIR}")
+web_logger.debug(f"数据目录: {DATA_DIR}, 结果文件: {RESULTS_FILE}, 图片目录: {IMAGES_DIR}")
 
 # 确保目录存在
 web_logger.info("创建必要的目录")
 try:
     DATA_DIR.mkdir(exist_ok=True)
-    web_logger.info(f"数据目录创建成功: {DATA_DIR}")
+    web_logger.debug(f"数据目录创建成功: {DATA_DIR}")
     IMAGES_DIR.mkdir(exist_ok=True)
-    web_logger.info(f"图片目录创建成功: {IMAGES_DIR}")
+    web_logger.debug(f"图片目录创建成功: {IMAGES_DIR}")
 except Exception as e:
     web_logger.error(f"创建目录失败: {str(e)}", exc_info=True)
     raise
@@ -75,14 +75,14 @@ web_logger.info(f"Web数据目录: {web_data_dir}")
 try:
     web_logger.info("挂载静态文件目录")
     app.mount("/static", StaticFiles(directory=static_dir), name="static")
-    web_logger.info("静态文件目录挂载成功")
+    web_logger.debug("静态文件目录挂载成功")
     
     app.mount("/web_data", StaticFiles(directory=web_data_dir), name="web_data")
-    web_logger.info("Web数据目录挂载成功")
+    web_logger.debug("Web数据目录挂载成功")
     
     web_logger.info("初始化模板引擎")
     templates = Jinja2Templates(directory=templates_dir)
-    web_logger.info("模板引擎初始化成功")
+    web_logger.debug("模板引擎初始化成功")
 except Exception as e:
     web_logger.error(f"静态文件或模板配置失败: {str(e)}", exc_info=True)
     raise
@@ -299,7 +299,7 @@ async def health_check():
 
 def start_server(host: str = "127.0.0.1", port: int = 8000):
     """启动Web服务器"""
-    web_logger.info(f"准备启动Web服务器 - 主机: {host}, 端口: {port}")
+    web_logger.debug(f"准备启动Web服务器 - 主机: {host}, 端口: {port}")
     
     try:
         # 检查端口是否可用
@@ -312,9 +312,9 @@ def start_server(host: str = "127.0.0.1", port: int = 8000):
         if result == 0:
             web_logger.warning(f"端口 {port} 已被占用")
         else:
-            web_logger.info(f"端口 {port} 可用")
+            web_logger.debug(f"端口 {port} 可用")
         
-        web_logger.info("启动uvicorn服务器...")
+        web_logger.info(f"🌐 Web服务器启动中... http://{host}:{port}")
         # 禁用uvicorn默认日志配置以避免PyInstaller打包环境下sys.stdout为None的问题
         uvicorn.run(
             app, 
@@ -323,11 +323,11 @@ def start_server(host: str = "127.0.0.1", port: int = 8000):
             log_config=None,  # 禁用默认日志配置
             access_log=False  # 禁用访问日志以避免stdout问题
         )
-        web_logger.info("Web服务器启动成功")
         
     except Exception as e:
         web_logger.error(f"Web服务器启动失败: {str(e)}", exc_info=True)
         raise
 
-if __name__ == "__main__":
-    start_server()
+# 注释掉独立启动代码，防止通过main.py导入时重复启动
+# if __name__ == "__main__":
+#     start_server()
