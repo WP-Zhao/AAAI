@@ -38,12 +38,23 @@ def build_exe():
         '--name=ScreenCapture',         # exe文件名
         '--icon=icon.ico',              # 图标文件（如果存在）
         '--add-data=config.json;.',     # 包含配置文件
+        '--add-data=templates;templates',  # 包含模板文件夹
+        '--add-data=static;static',     # 包含静态文件夹
         '--hidden-import=pynput.keyboard._win32',
         '--hidden-import=pynput.mouse._win32',
         '--hidden-import=PIL._tkinter_finder',
+        '--hidden-import=fastapi',      # FastAPI Web框架
+        '--hidden-import=uvicorn',      # ASGI服务器
+        '--hidden-import=starlette',    # Starlette框架
+        '--hidden-import=starlette.staticfiles',  # 静态文件支持
+        '--hidden-import=starlette.templating',   # 模板支持
+        '--hidden-import=jinja2',       # 模板引擎
         '--collect-all=pynput',
         '--collect-all=PIL',
         '--collect-all=pyperclip',
+        '--collect-all=fastapi',        # 收集FastAPI所有模块
+        '--collect-all=uvicorn',        # 收集uvicorn所有模块
+        '--collect-all=starlette',      # 收集starlette所有模块
         'main.py'
     ]
     
@@ -58,18 +69,39 @@ def build_exe():
         print("构建成功！")
         print(result.stdout)
         
-        # 复制配置文件到dist目录
+        # 复制配置文件和静态资源到dist目录
         dist_dir = Path('dist')
         if dist_dir.exists():
+            # 复制配置文件
             config_src = Path('config.json')
             config_dst = dist_dir / 'config.json'
             
             if config_src.exists():
                 shutil.copy2(config_src, config_dst)
                 print(f"已复制配置文件到: {config_dst}")
+            
+            # 复制static文件夹
+            static_src = Path('static')
+            static_dst = dist_dir / 'static'
+            
+            if static_src.exists():
+                if static_dst.exists():
+                    shutil.rmtree(static_dst)
+                shutil.copytree(static_src, static_dst)
+                print(f"已复制静态文件夹到: {static_dst}")
+            
+            # 复制templates文件夹
+            templates_src = Path('templates')
+            templates_dst = dist_dir / 'templates'
+            
+            if templates_src.exists():
+                if templates_dst.exists():
+                    shutil.rmtree(templates_dst)
+                shutil.copytree(templates_src, templates_dst)
+                print(f"已复制模板文件夹到: {templates_dst}")
         
         print(f"\n构建完成！exe文件位于: {dist_dir / 'ScreenCapture.exe'}")
-        print("请确保config.json文件与exe文件在同一目录下")
+        print("配置文件和静态资源已自动复制到exe目录")
         
     except subprocess.CalledProcessError as e:
         print(f"构建失败: {e}")
@@ -120,7 +152,7 @@ def main():
         print("=" * 50)
         print("使用说明:")
         print("1. exe文件位于 dist/ 目录下")
-        print("2. 请将 config.json 文件复制到exe文件同一目录")
+        print("2. config.json、static和templates文件夹已自动复制")
         print("3. 双击exe文件即可运行")
         print("4. 程序将在后台运行，按Ctrl+C退出")
         print("\n快捷打包: 双击 build.bat 文件")

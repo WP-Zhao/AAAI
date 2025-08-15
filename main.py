@@ -4,12 +4,46 @@ import sys
 import time
 import signal
 import threading
+import logging
+from datetime import datetime
 from keyboard_listener import KeyboardListener
 from screenshot import ScreenshotManager
 from clipboard_manager import ClipboardManager
 from email_sender import EmailSender
 from llm_manager import LLMManager
 from web_server import start_server
+
+# 配置日志系统
+def setup_logging():
+    """配置日志系统，同时输出到控制台和文件"""
+    # 创建logs目录
+    log_dir = "logs"
+    if not os.path.exists(log_dir):
+        os.makedirs(log_dir)
+    
+    # 生成日志文件名（包含时间戳）
+    log_filename = os.path.join(log_dir, f"app_{datetime.now().strftime('%Y%m%d_%H%M%S')}.log")
+    
+    # 配置日志格式
+    log_format = '%(asctime)s - %(name)s - %(levelname)s - %(message)s'
+    
+    # 配置根日志器
+    logging.basicConfig(
+        level=logging.INFO,
+        format=log_format,
+        handlers=[
+            logging.FileHandler(log_filename, encoding='utf-8'),
+            logging.StreamHandler(sys.stdout)
+        ]
+    )
+    
+    # 创建应用专用日志器
+    logger = logging.getLogger('ScreenCaptureApp')
+    logger.info(f"日志系统初始化完成，日志文件: {log_filename}")
+    return logger
+
+# 初始化日志系统
+logger = setup_logging()
 
 class ScreenCaptureApp:
     def __init__(self):
@@ -21,20 +55,27 @@ class ScreenCaptureApp:
         self.llm_manager = None
         self.web_server_thread = None
         self.running = False
+        self.logger = logging.getLogger('ScreenCaptureApp')
+        self.logger.info("ScreenCaptureApp实例初始化完成")
         
     def load_config(self, config_path="config.json"):
         """加载配置文件"""
+        self.logger.info(f"开始加载配置文件: {config_path}")
         try:
             if not os.path.exists(config_path):
+                self.logger.error(f"配置文件不存在: {config_path}")
                 print(f"配置文件不存在: {config_path}")
                 return False
                 
             with open(config_path, 'r', encoding='utf-8') as f:
                 self.config = json.load(f)
             
+            self.logger.info("配置文件加载成功")
+            self.logger.debug(f"配置内容: {json.dumps(self.config, ensure_ascii=False, indent=2)}")
             print("配置文件加载成功")
             return True
         except Exception as e:
+            self.logger.error(f"加载配置文件失败: {str(e)}", exc_info=True)
             print(f"加载配置文件失败: {str(e)}")
             return False
     
@@ -93,10 +134,22 @@ class ScreenCaptureApp:
             )
             
             # 启动Web服务（如果启用）
-            if self.config.get('web_service', {}).get('enabled', True):
+            web_service_config = self.config.get('web_service', {})
+            if web_service_config.get('enabled', True):
                 print("[7/7] 启动Web服务...", end=" ")
-                self.start_web_service()
-                print("✓ 成功")
+                self.logger.info("Web服务已启用，开始启动")
+                try:
+                    self.start_web_service()
+                    print("✓ 成功")
+                    self.logger.info("Web服务启动成功")
+                except Exception as e:
+                    print("✗ 失败")
+                    self.logger.error(f"Web服务启动失败: {str(e)}", exc_info=True)
+                    print(f"    Web服务启动失败: {str(e)}")
+                    return False
+            else:
+                print("[7/7] Web服务已禁用，跳过启动")
+                self.logger.info("Web服务已禁用，跳过启动")
             
             print("-" * 40)
             print("所有组件初始化完成")
@@ -126,33 +179,61 @@ class ScreenCaptureApp:
     
     def start_web_service(self):
         """启动Web服务"""
+        self.logger.info("开始启动Web服务")
         try:
             web_config = self.config.get('web_service', {})
             host = web_config.get('host', '0.0.0.0')
             port = web_config.get('port', 8000)
             
+            self.logger.info(f"Web服务配置 - Host: {host}, Port: {port}")
+            
             # 检查端口是否已被占用
             import socket
+            self.logger.info(f"检查端口 {port} 是否可用")
             try:
                 with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as s:
                     s.settimeout(1)
                     result = s.connect_ex(('127.0.0.1', port))
                     if result == 0:
+                        self.logger.warning(f"Web服务端口 {port} 已被占用，跳过启动")
                         print(f"Web服务端口 {port} 已被占用，跳过启动")
                         return
-            except Exception:
-                pass
+                    else:
+                        self.logger.info(f"端口 {port} 可用")
+            except Exception as e:
+                self.logger.warning(f"端口检查异常: {str(e)}")
             
             # 在单独线程中启动Web服务
+            self.logger.info("创建Web服务线程")
             self.web_server_thread = threading.Thread(
-                target=start_server,
+                target=self._web_server_wrapper,
                 args=(host, port),
-                daemon=True
+                daemon=True,
+                name="WebServerThread"
             )
             self.web_server_thread.start()
+            self.logger.info(f"Web服务线程已启动，线程ID: {self.web_server_thread.ident}")
+            
+            # 等待一小段时间，检查线程是否正常启动
+            time.sleep(0.5)
+            if self.web_server_thread.is_alive():
+                self.logger.info("Web服务线程运行正常")
+            else:
+                self.logger.error("Web服务线程启动后立即退出")
             
         except Exception as e:
+            self.logger.error(f"Web服务启动失败: {str(e)}", exc_info=True)
             print(f"Web服务启动失败: {str(e)}")
+            raise
+    
+    def _web_server_wrapper(self, host: str, port: int):
+        """Web服务器包装函数，用于捕获启动过程中的异常"""
+        try:
+            self.logger.info(f"Web服务器线程开始执行，准备启动服务器 {host}:{port}")
+            start_server(host, port)
+        except Exception as e:
+            self.logger.error(f"Web服务器线程执行失败: {str(e)}", exc_info=True)
+            print(f"Web服务器启动异常: {str(e)}")
             raise
     
     def on_screenshot_trigger(self):
